@@ -1,0 +1,95 @@
+diff -urN freetype-2.12.1.orig/builds/unix/aclocal.m4 freetype-2.12.1/builds/unix/aclocal.m4
+--- freetype-2.12.1.orig/builds/unix/aclocal.m4	2022-10-20 08:23:36.935785570 +0100
++++ freetype-2.12.1/builds/unix/aclocal.m4	2022-10-20 08:23:41.171779258 +0100
+@@ -2739,6 +2739,18 @@
+   hardcode_into_libs=yes
+   ;;
+ 
++kiwi*)
++  version_type=linux # correct to gnu/linux during the next big refactor
++  need_lib_prefix=no
++  need_version=no
++  dynamic_linker="$host_os runtime_loader"
++  library_names_spec='$libname$release$shared_ext$versuffix $libname$release$shared_ext$major $libname$shared_ext'
++  soname_spec='$libname$release$shared_ext$major'
++  shlibpath_var=LIBRARY_PATH
++  shlibpath_overrides_runpath=no
++  sys_lib_dlsearch_path_spec='/system/lib'
++  ;;
++
+ hpux9* | hpux10* | hpux11*)
+   # Give a soname corresponding to the major version so that dld.sl refuses to
+   # link against other versions.
+@@ -3530,7 +3542,7 @@
+   fi
+   ;;
+ 
+-haiku*)
++haiku* | kiwi*)
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+ 
+diff -urN freetype-2.12.1.orig/builds/unix/config.sub freetype-2.12.1/builds/unix/config.sub
+--- freetype-2.12.1.orig/builds/unix/config.sub	2022-10-20 08:23:36.935785570 +0100
++++ freetype-2.12.1/builds/unix/config.sub	2022-10-20 08:24:24.225715112 +0100
+@@ -1754,7 +1754,7 @@
+ 	     | onefs* | tirtos* | phoenix* | fuchsia* | redox* | bme* \
+ 	     | midnightbsd* | amdhsa* | unleashed* | emscripten* | wasi* \
+ 	     | nsk* | powerunix* | genode* | zvmoe* | qnx* | emx* | zephyr* \
+-	     | fiwix* )
++	     | fiwix* | kiwi*)
+ 		;;
+ 	# This one is extra strict with allowed versions
+ 	sco3.2v2 | sco3.2v[4-9]* | sco5v6*)
+diff -urN freetype-2.12.1.orig/builds/unix/configure freetype-2.12.1/builds/unix/configure
+--- freetype-2.12.1.orig/builds/unix/configure	2022-10-20 08:23:36.936785568 +0100
++++ freetype-2.12.1/builds/unix/configure	2022-10-20 08:23:41.173779255 +0100
+@@ -5440,7 +5440,7 @@
+   fi
+   ;;
+ 
+-haiku*)
++haiku* | kiwi*)
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+ 
+@@ -11321,6 +11321,18 @@
+   hardcode_into_libs=yes
+   ;;
+ 
++kiwi*)
++  version_type=linux # correct to gnu/linux during the next big refactor
++  need_lib_prefix=no
++  need_version=no
++  dynamic_linker="$host_os runtime_loader"
++  library_names_spec='$libname$release$shared_ext$versuffix $libname$release$shared_ext$major $libname$shared_ext'
++  soname_spec='$libname$release$shared_ext$major'
++  shlibpath_var=LIBRARY_PATH
++  shlibpath_overrides_runpath=no
++  sys_lib_dlsearch_path_spec='/system/lib'
++  ;;
++
+ hpux9* | hpux10* | hpux11*)
+   # Give a soname corresponding to the major version so that dld.sl refuses to
+   # link against other versions.
+diff -urN freetype-2.12.1.orig/builds/unix/ltmain.sh freetype-2.12.1/builds/unix/ltmain.sh
+--- freetype-2.12.1.orig/builds/unix/ltmain.sh	2022-10-20 08:23:36.936785568 +0100
++++ freetype-2.12.1/builds/unix/ltmain.sh	2022-10-20 08:25:20.800629826 +0100
+@@ -7279,7 +7279,7 @@
+ 	    # These systems don't actually have a C or math library (as such)
+ 	    continue
+ 	    ;;
+-	  *-*-os2*)
++	  *-*-os2* | *-*-kiwi*)
+ 	    # These systems don't actually have a C library (as such)
+ 	    test X-lc = "X$arg" && continue
+ 	    ;;
+@@ -9398,7 +9398,7 @@
+       if test yes = "$build_libtool_libs"; then
+ 	if test -n "$rpath"; then
+ 	  case $host in
+-	  *-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2* | *-*-beos* | *-cegcc* | *-*-haiku*)
++	  *-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2* | *-*-beos* | *-cegcc* | *-*-haiku* | *-*-kiwi*)
+ 	    # these systems don't actually have a c library (as such)!
+ 	    ;;
+ 	  *-*-rhapsody* | *-*-darwin1.[012])
