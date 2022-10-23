@@ -1,0 +1,9 @@
+{
+    "name": "curl",
+    "version": "7.85.0",
+    "revision": "1",
+    "archs": ["amd64"],
+    "libraries": {
+        "curl": {}
+    }
+}
