@@ -12,7 +12,7 @@ cd build
 # TODO: Enable socketpair when we support it and AF_UNIX sockets.
 "../${name}-${version}/configure" --host=x86_64-kiwi --prefix=/system --bindir=/system/bin --libdir=/system/lib --includedir=/system/devel/include --datadir=/system/data/curl --libexecdir=/system/lib --enable-static=no --without-ssl --disable-ipv6 --disable-socketpair
 make -j8
-make DESTDIR=$(cd ../install; pwd) install
+make DESTDIR="$(cd ../install; pwd)" install
 
 cd ..
 

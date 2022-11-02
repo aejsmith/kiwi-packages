@@ -10,7 +10,7 @@ cd build
 
 LDSHAREDLIBC="-lsystem" CROSS_PREFIX=x86_64-kiwi- ../zlib-1.2.13/configure --prefix=/system --includedir=/system/devel/include
 make -j8
-make DESTDIR=$(cd ../install; pwd) install
+make DESTDIR="$(cd ../install; pwd)" install
 
 cd ..
 

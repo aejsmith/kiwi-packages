@@ -1,0 +1,126 @@
+diff -urN openssl-3.0.7.orig/apps/ca.c openssl-3.0.7/apps/ca.c
+--- openssl-3.0.7.orig/apps/ca.c	2022-11-01 14:14:36.000000000 +0000
++++ openssl-3.0.7/apps/ca.c	2022-11-02 19:40:55.248749511 +0000
+@@ -26,7 +26,7 @@
+ #ifndef W_OK
+ # ifdef OPENSSL_SYS_VMS
+ #  include <unistd.h>
+-# elif !defined(OPENSSL_SYS_VXWORKS) && !defined(OPENSSL_SYS_WINDOWS) && !defined(OPENSSL_SYS_TANDEM)
++# elif !defined(OPENSSL_SYS_VXWORKS) && !defined(OPENSSL_SYS_WINDOWS) && !defined(OPENSSL_SYS_TANDEM) && !defined(__Kiwi__)
+ #  include <sys/file.h>
+ # endif
+ #endif
+diff -urN openssl-3.0.7.orig/apps/include/http_server.h openssl-3.0.7/apps/include/http_server.h
+--- openssl-3.0.7.orig/apps/include/http_server.h	2022-11-01 14:14:36.000000000 +0000
++++ openssl-3.0.7/apps/include/http_server.h	2022-11-02 19:40:55.248749511 +0000
+@@ -27,7 +27,7 @@
+ # endif
+ 
+ # if !defined(NO_FORK) && !defined(OPENSSL_NO_SOCK) \
+-    && !defined(OPENSSL_NO_POSIX_IO)
++    && !defined(OPENSSL_NO_POSIX_IO) && !defined(__Kiwi__)
+ #  define HTTP_DAEMON
+ #  include <sys/types.h>
+ #  include <sys/wait.h>
+diff -urN openssl-3.0.7.orig/apps/lib/apps.c openssl-3.0.7/apps/lib/apps.c
+--- openssl-3.0.7.orig/apps/lib/apps.c	2022-11-01 14:14:36.000000000 +0000
++++ openssl-3.0.7/apps/lib/apps.c	2022-11-02 19:40:55.248749511 +0000
+@@ -2727,7 +2727,7 @@
+ 
+     return ret;
+ }
+-#elif defined(OPENSSL_SYS_VXWORKS)
++#elif defined(OPENSSL_SYS_VXWORKS) || defined(__Kiwi__) // Remove once sys/resource.h is implemented
+ # include <time.h>
+ 
+ double app_tminterval(int stop, int usertime)
+diff -urN openssl-3.0.7.orig/Configurations/50-kiwi.conf openssl-3.0.7/Configurations/50-kiwi.conf
+--- openssl-3.0.7.orig/Configurations/50-kiwi.conf	1970-01-01 01:00:00.000000000 +0100
++++ openssl-3.0.7/Configurations/50-kiwi.conf	2022-11-02 19:40:55.248749511 +0000
+@@ -0,0 +1,25 @@
++my %targets = (
++    "kiwi-common" => {
++        template         => 1,
++        CC               => "cc",
++        CFLAGS           => add_before(picker(default => "-Wall",
++                                              debug   => "-g -O0",
++                                              release => "-O2")),
++        cflags           => add_before("-include \$(SRCDIR)/os-dep/kiwi.h"),
++        AR               => "ar",
++        ARFLAGS          => "qc",
++        HASHBANGPERL     => "/bin/env perl",
++        sys_id           => "",
++        perlasm_scheme   => "elf",
++        thread_scheme    => "pthreads",
++        dso_scheme       => "dlfcn",
++        shared_target    => "gnu-shared",
++        shared_cflag     => "-fPIC",
++        shared_ldflag    => "-shared",
++        perl_platform    => 'Unix',
++    },
++    "kiwi-x86_64" => {
++        inherit_from     => [ "kiwi-common" ],
++        bn_ops           => "SIXTY_FOUR_BIT_LONG",
++    },
++);
+diff -urN openssl-3.0.7.orig/crypto/bio/bss_log.c openssl-3.0.7/crypto/bio/bss_log.c
+--- openssl-3.0.7.orig/crypto/bio/bss_log.c	2022-11-01 14:14:36.000000000 +0000
++++ openssl-3.0.7/crypto/bio/bss_log.c	2022-11-02 19:40:55.248749511 +0000
+@@ -41,6 +41,8 @@
+                                  * _ANSI_C_SOURCE */
+ #elif defined(__DJGPP__) && defined(OPENSSL_NO_SOCK)
+ # define NO_SYSLOG
++#elif defined(__Kiwi__)
++# define NO_SYSLOG
+ #elif (!defined(MSDOS) || defined(WATT32)) && !defined(OPENSSL_SYS_VXWORKS) && !defined(NO_SYSLOG)
+ # include <syslog.h>
+ #endif
+diff -urN openssl-3.0.7.orig/crypto/threads_pthread.c openssl-3.0.7/crypto/threads_pthread.c
+--- openssl-3.0.7.orig/crypto/threads_pthread.c	2022-11-01 14:14:36.000000000 +0000
++++ openssl-3.0.7/crypto/threads_pthread.c	2022-11-02 19:40:55.249749507 +0000
+@@ -39,7 +39,9 @@
+ # include <assert.h>
+ 
+ # ifdef PTHREAD_RWLOCK_INITIALIZER
+-#  define USE_RWLOCK
++#  if !defined(__Kiwi__)
++#    define USE_RWLOCK
++#  endif
+ # endif
+ 
+ CRYPTO_RWLOCK *CRYPTO_THREAD_lock_new(void)
+diff -urN openssl-3.0.7.orig/os-dep/kiwi.h openssl-3.0.7/os-dep/kiwi.h
+--- openssl-3.0.7.orig/os-dep/kiwi.h	1970-01-01 01:00:00.000000000 +0100
++++ openssl-3.0.7/os-dep/kiwi.h	2022-11-02 19:40:55.249749507 +0000
+@@ -0,0 +1,11 @@
++/*
++ * Copyright 2022 The OpenSSL Project Authors. All Rights Reserved.
++ *
++ * Licensed under the Apache License 2.0 (the "License").  You may not use
++ * this file except in compliance with the License.  You can obtain a copy
++ * in the file LICENSE in the source distribution or at
++ * https://www.openssl.org/source/license.html
++ */
++
++#include <sys/select.h>
++#include <sys/time.h>
+diff -urN openssl-3.0.7.orig/util/perl/OpenSSL/config.pm openssl-3.0.7/util/perl/OpenSSL/config.pm
+--- openssl-3.0.7.orig/util/perl/OpenSSL/config.pm	2022-11-01 14:14:36.000000000 +0000
++++ openssl-3.0.7/util/perl/OpenSSL/config.pm	2022-11-02 19:40:55.249749507 +0000
+@@ -124,6 +124,7 @@
+     [ 'DragonFly:.*',               '${MACHINE}-whatever-dragonfly' ],
+     [ 'FreeBSD:.*',                 '${MACHINE}-whatever-freebsd' ],
+     [ 'Haiku:.*',                   '${MACHINE}-whatever-haiku' ],
++    [ 'Kiwi:.*',                    '${MACHINE}-whatever-kiwi' ],
+     # Order is important, this has to appear before 'NetBSD:.*'
+     [ 'NetBSD:.*?:.*?:.*386.*',
+       sub {
+@@ -803,6 +804,8 @@
+       [ '.*-.*-.*bsd.*',          { target => "BSD-generic32" } ],
+       [ 'x86_64-.*-haiku',        { target => "haiku-x86_64" } ],
+       [ '.*-.*-haiku',            { target => "haiku-x86" } ],
++      [ 'x86_64-.*-kiwi',         { target => "kiwi-x86_64" } ],
++      [ 'aarch64-.*-kiwi',        { target => "kiwi-aarch64" } ],
+       [ '.*-.*-osf',              { target => "osf1-alpha" } ],
+       [ '.*-.*-tru64',            { target => "tru64-alpha" } ],
+       [ '.*-.*-[Uu]nix[Ww]are7',

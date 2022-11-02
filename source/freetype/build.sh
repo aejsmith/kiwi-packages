@@ -14,7 +14,7 @@ cd build
 sed -i 's|/\* #define FT_CONFIG_OPTION_SUBPIXEL_RENDERING \*/|#define FT_CONFIG_OPTION_SUBPIXEL_RENDERING|' ftoption.h
 
 make -j8
-make DESTDIR=$(cd ../install; pwd) install
+make DESTDIR="$(cd ../install; pwd)" install
 
 cd ..
 

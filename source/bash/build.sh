@@ -19,7 +19,7 @@ cd build
 
 "../${name}-${base_version}/configure" --host=x86_64-kiwi --prefix=/system --datadir=/system/data/bash --libexecdir=/system/lib --disable-nls --without-bash-malloc
 make -j8
-make DESTDIR=$(cd ../install; pwd) install
+make DESTDIR="$(cd ../install; pwd)" install
 
 cd ..
 

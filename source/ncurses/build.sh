@@ -11,7 +11,7 @@ cd build
 
 "../${name}-${version}/configure" --host=x86_64-kiwi --prefix=/system --bindir=/system/bin --libdir=/system/lib --includedir=/system/devel/include --datadir=/system/data/ncurses --libexecdir=/system/lib --disable-nls --disable-mouse --without-cxx-binding --with-shared --without-manpages --without-normal --without-debug
 make -j8
-make DESTDIR=$(cd ../install; pwd) install
+make DESTDIR="$(cd ../install; pwd)" install
 
 cd ..
 
