@@ -1,6 +1,6 @@
-diff -urN curl-7.85.0.orig/config.sub curl-7.85.0/config.sub
---- curl-7.85.0.orig/config.sub	2022-10-22 10:56:18.603019515 +0100
-+++ curl-7.85.0/config.sub	2022-10-22 10:58:26.748856081 +0100
+diff -urN curl-7.86.0.orig/config.sub curl-7.86.0/config.sub
+--- curl-7.86.0.orig/config.sub	2022-10-06 10:20:20.000000000 +0100
++++ curl-7.86.0/config.sub	2022-11-03 08:29:18.321600760 +0000
 @@ -1754,7 +1754,7 @@
  	     | onefs* | tirtos* | phoenix* | fuchsia* | redox* | bme* \
  	     | midnightbsd* | amdhsa* | unleashed* | emscripten* | wasi* \
@@ -10,10 +10,10 @@ diff -urN curl-7.85.0.orig/config.sub curl-7.85.0/config.sub
  		;;
  	# This one is extra strict with allowed versions
  	sco3.2v2 | sco3.2v[4-9]* | sco5v6*)
-diff -urN curl-7.85.0.orig/configure curl-7.85.0/configure
---- curl-7.85.0.orig/configure	2022-10-22 10:56:18.595019525 +0100
-+++ curl-7.85.0/configure	2022-10-22 11:04:52.028348510 +0100
-@@ -9275,7 +9275,7 @@
+diff -urN curl-7.86.0.orig/configure curl-7.86.0/configure
+--- curl-7.86.0.orig/configure	2022-10-17 07:16:53.000000000 +0100
++++ curl-7.86.0/configure	2022-11-03 08:29:18.325600754 +0000
+@@ -9287,7 +9287,7 @@
    fi
    ;;
  
@@ -22,7 +22,7 @@ diff -urN curl-7.85.0.orig/configure curl-7.85.0/configure
    lt_cv_deplibs_check_method=pass_all
    ;;
  
-@@ -15194,6 +15194,18 @@
+@@ -15206,6 +15206,18 @@
    hardcode_into_libs=yes
    ;;
  
@@ -41,9 +41,9 @@ diff -urN curl-7.85.0.orig/configure curl-7.85.0/configure
  hpux9* | hpux10* | hpux11*)
    # Give a soname corresponding to the major version so that dld.sl refuses to
    # link against other versions.
-diff -urN curl-7.85.0.orig/include/curl/curl.h curl-7.85.0/include/curl/curl.h
---- curl-7.85.0.orig/include/curl/curl.h	2022-10-22 10:56:18.600019519 +0100
-+++ curl-7.85.0/include/curl/curl.h	2022-10-22 11:19:23.836189154 +0100
+diff -urN curl-7.86.0.orig/include/curl/curl.h curl-7.86.0/include/curl/curl.h
+--- curl-7.86.0.orig/include/curl/curl.h	2022-10-06 10:19:59.000000000 +0100
++++ curl-7.86.0/include/curl/curl.h	2022-11-03 08:29:18.325600754 +0000
 @@ -76,7 +76,7 @@
      defined(__CYGWIN__) || defined(AMIGA) || defined(__NuttX__) || \
     (defined(__FreeBSD_version) && (__FreeBSD_version < 800000)) || \
@@ -53,9 +53,9 @@ diff -urN curl-7.85.0.orig/include/curl/curl.h curl-7.85.0/include/curl/curl.h
  #include <sys/select.h>
  #endif
  
-diff -urN curl-7.85.0.orig/ltmain.sh curl-7.85.0/ltmain.sh
---- curl-7.85.0.orig/ltmain.sh	2022-10-22 10:56:18.595019525 +0100
-+++ curl-7.85.0/ltmain.sh	2022-10-22 11:04:11.821402088 +0100
+diff -urN curl-7.86.0.orig/ltmain.sh curl-7.86.0/ltmain.sh
+--- curl-7.86.0.orig/ltmain.sh	2022-10-06 10:20:15.000000000 +0100
++++ curl-7.86.0/ltmain.sh	2022-11-03 08:29:18.326600752 +0000
 @@ -7283,7 +7283,7 @@
  	    # These systems don't actually have a C or math library (as such)
  	    continue
@@ -74,9 +74,9 @@ diff -urN curl-7.85.0.orig/ltmain.sh curl-7.85.0/ltmain.sh
  	    # these systems don't actually have a c library (as such)!
  	    ;;
  	  *-*-rhapsody* | *-*-darwin1.[012])
-diff -urN curl-7.85.0.orig/m4/libtool.m4 curl-7.85.0/m4/libtool.m4
---- curl-7.85.0.orig/m4/libtool.m4	2022-10-22 10:56:18.596019524 +0100
-+++ curl-7.85.0/m4/libtool.m4	2022-10-22 11:00:40.679683249 +0100
+diff -urN curl-7.86.0.orig/m4/libtool.m4 curl-7.86.0/m4/libtool.m4
+--- curl-7.86.0.orig/m4/libtool.m4	2022-10-06 10:20:15.000000000 +0100
++++ curl-7.86.0/m4/libtool.m4	2022-11-03 08:29:18.327600751 +0000
 @@ -2732,6 +2732,18 @@
    hardcode_into_libs=yes
    ;;

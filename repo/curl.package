@@ -1,6 +1,6 @@
 {
     "name": "curl",
-    "version": "7.85.0",
+    "version": "7.86.0",
     "revision": "1",
     "archs": ["amd64"],
     "libraries": {
