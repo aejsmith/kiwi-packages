@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 name="curl"
 version="7.86.0"
-revision="1"
+revision="2"
 
 tar xf "${name}-${version}.tar.xz"
 patch -d "${name}-${version}" -Np1 -i "../${name}-${version}-kiwi.patch"

@@ -1,7 +1,7 @@
 {
     "name": "openssl",
     "version": "3.0.7",
-    "revision": "1",
+    "revision": "2",
     "archs": ["amd64"],
     "libraries": {
         "crypto": {},

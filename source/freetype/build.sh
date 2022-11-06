@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 name="freetype"
 version="2.12.1"
-revision="2"
+revision="3"
 
 tar xf "${name}-${version}.tar.xz"
 patch -d "${name}-${version}" -Np1 -i "../${name}-${version}-kiwi.patch"

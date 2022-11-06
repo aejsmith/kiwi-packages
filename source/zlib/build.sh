@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 name="zlib"
 version="1.2.13"
-revision="1"
+revision="2"
 
 tar xf "${name}-${version}.tar.gz"
 

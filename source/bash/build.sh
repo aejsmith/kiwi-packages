@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 name="bash"
 version="5.2.2"
-revision="1"
+revision="2"
 
 base_version="5.2"
 patches=(bash52-001 bash52-002)
@@ -17,7 +17,7 @@ patch -d "${name}-${base_version}" -Np1 -i "../${name}-${version}-kiwi.patch"
 mkdir build install
 cd build
 
-"../${name}-${base_version}/configure" --host=x86_64-kiwi --prefix=/system --datadir=/system/data/bash --libexecdir=/system/lib --disable-nls --without-bash-malloc
+"../${name}-${base_version}/configure" --host=x86_64-kiwi --prefix=/system --datadir=/system/data/bash --libexecdir=/system/lib --disable-nls --without-bash-malloc ac_cv_func_dlopen=no
 make -j8
 make DESTDIR="$(cd ../install; pwd)" install
 

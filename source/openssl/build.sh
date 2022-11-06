@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 name="openssl"
 version="3.0.7"
-revision="1"
+revision="2"
 
 tar xf "${name}-${version}.tar.gz"
 patch -d "${name}-${version}" -Np1 -i "../${name}-${version}-kiwi.patch"

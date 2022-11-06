@@ -1,7 +1,7 @@
 {
     "name": "zlib",
     "version": "1.2.13",
-    "revision": "1",
+    "revision": "2",
     "archs": ["amd64"],
     "libraries": {
         "z": {}
