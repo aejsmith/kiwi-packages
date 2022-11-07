@@ -1,6 +1,6 @@
 {
     "name": "nano",
     "version": "6.4",
-    "revision": "1",
+    "revision": "2",
     "archs": ["amd64"]
 }

@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 name="nano"
 version="6.4"
-revision="1"
+revision="2"
 
 tar xf "${name}-${version}.tar.xz"
 
@@ -11,7 +11,7 @@ mkdir build install
 cd build
 
 # TODO: Remove LIBS once we link to libkernel by default.
-LIBS="-lkernel" "../${name}-${version}/configure" --host=x86_64-kiwi --prefix=/system --datadir=/system/data/nano --libexecdir=/system/lib --disable-mouse --disable-speller --disable-nls --disable-utf8 ac_cv_header_langinfo_h=0
+LIBS="-lkernel" "../${name}-${version}/configure" --host=x86_64-kiwi --prefix=/system --datadir=/system/data --libexecdir=/system/lib --disable-mouse --disable-speller --disable-nls --disable-utf8 ac_cv_header_langinfo_h=0
 make -j8
 make DESTDIR="$(cd ../install; pwd)" install
 
