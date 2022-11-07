@@ -1,0 +1,6 @@
+{
+    "name": "nano",
+    "version": "6.4",
+    "revision": "1",
+    "archs": ["amd64"]
+}
