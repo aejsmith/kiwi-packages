@@ -1,0 +1,39 @@
+pkg_name="bash"
+pkg_version="5.2.2"
+pkg_revision="3"
+
+bash_base_version="5.2"
+bash_patches=(bash52-001 bash52-002)
+
+pkg_sources=("https://ftp.gnu.org/gnu/bash/${pkg_name}-${bash_base_version}.tar.gz")
+for patch in "${bash_patches[@]}"; do
+    pkg_sources+=("https://ftp.gnu.org/gnu/bash/${pkg_name}-${bash_base_version}-patches/${patch}")
+done
+
+pkg_build() {
+    tar xf "${pkg_download_dir}/${pkg_name}-${bash_base_version}.tar.gz"
+
+    for patch in "${bash_patches[@]}"; do
+        patch -d "${pkg_name}-${bash_base_version}" -Np0 -i "${pkg_download_dir}/${patch}"
+    done
+
+    patch -d "${pkg_name}-${bash_base_version}" -Np1 -i "${pkg_source_dir}/${pkg_name}-${pkg_version}-kiwi.patch"
+
+    mkdir build
+    cd build
+
+    "../${pkg_name}-${bash_base_version}/configure" \
+        --host="$pkg_toolchain_target" \
+        --prefix=/system --datadir=/system/data/bash --libexecdir=/system/lib \
+        --disable-nls --without-bash-malloc \
+        ac_cv_func_dlopen=no
+
+    make -j8
+    make DESTDIR="$pkg_install_dir" install
+
+    # Remove man pages and texinfo files
+    rm -rf "${pkg_install_dir}/system/share"
+
+    # sh symlink.
+    ln -s bash "${pkg_install_dir}/system/bin/sh"
+}

@@ -1,0 +1,25 @@
+pkg_name="freetype"
+pkg_version="2.12.1"
+pkg_revision="4"
+pkg_sources=("https://download-mirror.savannah.gnu.org/releases/freetype/${pkg_name}-${pkg_version}.tar.xz")
+
+pkg_build() {
+    tar xf "${pkg_download_dir}/${pkg_name}-${pkg_version}.tar.xz"
+
+    patch -d "${pkg_name}-${pkg_version}" -Np1 -i "${pkg_source_dir}/${pkg_name}-${pkg_version}-kiwi.patch"
+
+    mkdir build
+    cd build
+
+    "../${pkg_name}-${pkg_version}/configure" \
+        --host="$pkg_toolchain_target" --prefix=/system --bindir=/system/bin \
+        --libdir=/system/lib --includedir=/system/devel/include \
+        --datadir=/system/data/freetype --libexecdir=/system/lib \
+        --with-zlib=yes --with-bzip2=no --with-png=no --with-harfbuzz=no \
+        --with-brotli=no --enable-static=no
+
+    sed -i 's|/\* #define FT_CONFIG_OPTION_SUBPIXEL_RENDERING \*/|#define FT_CONFIG_OPTION_SUBPIXEL_RENDERING|' ftoption.h
+
+    make -j8
+    make DESTDIR="$pkg_install_dir" install
+}

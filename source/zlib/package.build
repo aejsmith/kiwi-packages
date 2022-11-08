@@ -1,0 +1,21 @@
+pkg_name="zlib"
+pkg_version="1.2.13"
+pkg_revision="3"
+pkg_sources=("http://zlib.net/${pkg_name}-${pkg_version}.tar.gz")
+
+pkg_build() {
+    tar xf "${pkg_download_dir}/${pkg_name}-${pkg_version}.tar.gz"
+
+    mkdir build
+    cd build
+
+    LDSHAREDLIBC="-lsystem" CROSS_PREFIX="${pkg_toolchain_target}-" \
+        "../${pkg_name}-${pkg_version}/configure" \
+            --prefix=/system --includedir=/system/devel/include
+
+    make -j8
+    make DESTDIR="$pkg_install_dir" install
+
+    rm -rf "${pkg_install_dir}/system/share"
+    rm -f "${pkg_install_dir}/system/lib"/*.a
+}

@@ -1,0 +1,27 @@
+pkg_name="openssl"
+pkg_version="3.0.7"
+pkg_revision="3"
+pkg_sources=("https://www.openssl.org/source/${pkg_name}-${pkg_version}.tar.gz")
+
+pkg_build() {
+    tar xf "${pkg_download_dir}/${pkg_name}-${pkg_version}.tar.gz"
+
+    patch -d "${pkg_name}-${pkg_version}" -Np1 -i "${pkg_source_dir}/${pkg_name}-${pkg_version}-kiwi.patch"
+
+    mkdir build
+    cd build
+
+    "../${pkg_name}-${pkg_version}/Configure" \
+        --prefix=/system --cross-compile-prefix="${pkg_toolchain_target}-" \
+        --openssldir=/system/etc/openssl \
+        shared enable-ec_nistp_64_gcc_128 no-tests kiwi-x86_64
+
+    make -j8
+    make DESTDIR="$pkg_install_dir" install_sw install_ssldirs
+
+    rm -rf "${pkg_install_dir}/system/lib"/*.a
+    rm -rf "${pkg_install_dir}/system/lib/pkgconfig"
+
+    mkdir -p "${pkg_install_dir}/system/devel"
+    mv "${pkg_install_dir}/system/include" "${pkg_install_dir}/system/devel"
+}

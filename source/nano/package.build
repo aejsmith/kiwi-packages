@@ -1,0 +1,24 @@
+pkg_name="nano"
+pkg_version="6.4"
+pkg_revision="3"
+pkg_sources=("https://www.nano-editor.org/dist/v6/${pkg_name}-${pkg_version}.tar.xz")
+
+pkg_build() {
+    tar xf "${pkg_download_dir}/${pkg_name}-${pkg_version}.tar.xz"
+
+    patch -d "${pkg_name}-${pkg_version}" -Np1 -i "${pkg_source_dir}/${pkg_name}-${pkg_version}-kiwi.patch"
+
+    mkdir build
+    cd build
+
+    "../${pkg_name}-${pkg_version}/configure" \
+        --host="$pkg_toolchain_target" --prefix=/system --datadir=/system/data \
+        --libexecdir=/system/lib --disable-mouse --disable-speller \
+        --disable-nls --disable-utf8 ac_cv_header_langinfo_h=0
+
+    make -j8
+    make DESTDIR="$pkg_install_dir" install
+
+    # Remove man pages and texinfo files
+    rm -rf "${pkg_install_dir}/system/share"
+}

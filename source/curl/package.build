@@ -1,0 +1,25 @@
+pkg_name="curl"
+pkg_version="7.86.0"
+pkg_revision="3"
+pkg_sources=("https://curl.se/download/${pkg_name}-${pkg_version}.tar.xz")
+
+pkg_build() {
+    tar xf "${pkg_download_dir}/${pkg_name}-${pkg_version}.tar.xz"
+
+    patch -d "${pkg_name}-${pkg_version}" -Np1 -i "${pkg_source_dir}/${pkg_name}-${pkg_version}-kiwi.patch"
+
+    mkdir build
+    cd build
+
+    # TODO: Enable socketpair when we support it and AF_UNIX sockets.
+    "../${pkg_name}-${pkg_version}/configure" \
+        --host="$pkg_toolchain_target" --prefix=/system --bindir=/system/bin \
+        --libdir=/system/lib --includedir=/system/devel/include \
+        --datadir=/system/data/curl --libexecdir=/system/lib --enable-static=no \
+        --with-ssl --disable-ipv6 --disable-socketpair
+
+    make -j8
+    make DESTDIR="$pkg_install_dir" install
+
+    rm -rf "${pkg_install_dir}/system/share"
+}
