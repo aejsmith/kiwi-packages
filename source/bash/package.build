@@ -1,6 +1,6 @@
 pkg_name="bash"
 pkg_version="5.2.2"
-pkg_revision="3"
+pkg_revision="4"
 
 bash_base_version="5.2"
 bash_patches=(bash52-001 bash52-002)

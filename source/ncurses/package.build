@@ -1,6 +1,6 @@
 pkg_name="ncurses"
 pkg_version="6.3"
-pkg_revision="4"
+pkg_revision="5"
 pkg_sources=("http://invisible-mirror.net/archives/ncurses/${pkg_name}-${pkg_version}.tar.gz")
 
 pkg_build() {
@@ -16,8 +16,17 @@ pkg_build() {
         --libdir=/system/lib --includedir=/system/devel/include \
         --datadir=/system/data/ncurses --libexecdir=/system/lib \
         --disable-nls --disable-mouse --without-cxx-binding --with-shared \
-        --without-manpages --without-normal --without-debug --with-termlib
+        --without-manpages --without-normal --without-debug \
+        --enable-widec --disable-ext-colors
 
     make -j8
     make DESTDIR="$pkg_install_dir" install
+
+    # Aliases for non-wide libraries, and standalone terminfo library.
+    for lib in form menu ncurses panel; do
+        echo "INPUT(lib${lib}w.so.6)" > "${pkg_install_dir}/system/lib/lib${lib}.so"
+    done
+    for lib in curses cursesw tic tinfo; do
+        echo "INPUT(libncursesw.so.6)" > "${pkg_install_dir}/system/lib/lib${lib}.so"
+    done
 }
