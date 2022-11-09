@@ -91,7 +91,7 @@ done
 
 # Update sysroot.
 pkg_msg "Updating sysroot"
-scons -C ../../.. sysroot
+scons -C ../../.. IGNORE_SUBMODULES=1 sysroot
 
 # Build the package.
 pkg_msg "Running build function"
