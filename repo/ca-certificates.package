@@ -1,0 +1,6 @@
+{
+    "name": "ca-certificates",
+    "version": "2022-10-11",
+    "revision": "1",
+    "archs": ["amd64"]
+}

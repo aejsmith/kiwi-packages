@@ -1,0 +1,12 @@
+# https://curl.se/docs/caextract.html
+
+pkg_name="ca-certificates"
+pkg_version="2022-10-11"
+pkg_revision="1"
+pkg_sources=("https://curl.se/ca/cacert-${pkg_version}.pem")
+
+pkg_build() {
+    ssl_dir="${pkg_install_dir}/system/etc/openssl"
+    mkdir -p "$ssl_dir"
+    mv "${pkg_download_dir}/cacert-${pkg_version}.pem" "${ssl_dir}/cert.pem"
+}
