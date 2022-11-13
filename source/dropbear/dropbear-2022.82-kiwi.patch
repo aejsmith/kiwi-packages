@@ -1,0 +1,138 @@
+diff -urN dropbear-2022.82.orig/cli-chansession.c dropbear-2022.82/cli-chansession.c
+--- dropbear-2022.82.orig/cli-chansession.c	2022-11-13 11:03:21.144165655 +0000
++++ dropbear-2022.82/cli-chansession.c	2022-11-13 11:04:17.484091264 +0000
+@@ -233,14 +233,21 @@
+ 		/* Some sane defaults */
+ 		ws.ws_row = 25;
+ 		ws.ws_col = 80;
++#ifndef __Kiwi__
+ 		ws.ws_xpixel = 0;
+ 		ws.ws_ypixel = 0;
++#endif
+ 	}
+ 
+ 	buf_putint(ses.writepayload, ws.ws_col); /* Cols */
+ 	buf_putint(ses.writepayload, ws.ws_row); /* Rows */
++#ifdef __Kiwi__
++	buf_putint(ses.writepayload, 0); /* Width */
++	buf_putint(ses.writepayload, 0); /* Height */
++#else
+ 	buf_putint(ses.writepayload, ws.ws_xpixel); /* Width */
+ 	buf_putint(ses.writepayload, ws.ws_ypixel); /* Height */
++#endif
+ 
+ }
+ 
+diff -urN dropbear-2022.82.orig/config.sub dropbear-2022.82/config.sub
+--- dropbear-2022.82.orig/config.sub	2022-11-13 11:03:21.145165654 +0000
++++ dropbear-2022.82/config.sub	2022-11-13 11:03:29.081155176 +0000
+@@ -1754,7 +1754,7 @@
+ 	     | onefs* | tirtos* | phoenix* | fuchsia* | redox* | bme* \
+ 	     | midnightbsd* | amdhsa* | unleashed* | emscripten* | wasi* \
+ 	     | nsk* | powerunix* | genode* | zvmoe* | qnx* | emx* | zephyr* \
+-	     | fiwix* )
++	     | fiwix* | kiwi*)
+ 		;;
+ 	# This one is extra strict with allowed versions
+ 	sco3.2v2 | sco3.2v[4-9]* | sco5v6*)
+diff -urN dropbear-2022.82.orig/dbrandom.c dropbear-2022.82/dbrandom.c
+--- dropbear-2022.82.orig/dbrandom.c	2022-11-13 11:03:21.146165653 +0000
++++ dropbear-2022.82/dbrandom.c	2022-11-13 11:03:29.081155176 +0000
+@@ -296,8 +296,10 @@
+ 	gettimeofday(&tv, NULL);
+ 	sha256_process(&hs, (void*)&tv, sizeof(tv));
+ 
++#ifndef __Kiwi__
+ 	clockval = clock();
+ 	sha256_process(&hs, (void*)&clockval, sizeof(clockval));
++#endif
+ 
+ 	/* When a private key is read by the client or server it will
+ 	 * be added to the hashpool - see runopts.c */
+diff -urN dropbear-2022.82.orig/dbutil.c dropbear-2022.82/dbutil.c
+--- dropbear-2022.82.orig/dbutil.c	2022-11-13 11:03:21.146165653 +0000
++++ dropbear-2022.82/dbutil.c	2022-11-13 11:03:29.081155176 +0000
+@@ -599,6 +599,7 @@
+ }
+ 
+ void disallow_core() {
++#ifndef __Kiwi__
+ 	struct rlimit lim = {0};
+ 	if (getrlimit(RLIMIT_CORE, &lim) < 0) {
+ 		TRACE(("getrlimit(RLIMIT_CORE) failed"));
+@@ -607,6 +608,7 @@
+ 	if (setrlimit(RLIMIT_CORE, &lim) < 0) {
+ 		TRACE(("setrlimit(RLIMIT_CORE) failed"));
+ 	}
++#endif
+ }
+ 
+ /* Returns DROPBEAR_SUCCESS or DROPBEAR_FAILURE, with the result in *val */
+diff -urN dropbear-2022.82.orig/includes.h dropbear-2022.82/includes.h
+--- dropbear-2022.82.orig/includes.h	2022-11-13 11:03:21.148165650 +0000
++++ dropbear-2022.82/includes.h	2022-11-13 11:03:29.081155176 +0000
+@@ -36,12 +36,16 @@
+ #include <sys/time.h>
+ #include <sys/un.h>
+ #include <sys/wait.h>
++#ifndef __Kiwi__
+ #include <sys/resource.h>
++#endif
+ 
+ #include <stdio.h>
+ #include <errno.h>
+ #include <fcntl.h>
++#ifndef __Kiwi__
+ #include <grp.h>
++#endif
+ #include <limits.h>
+ #include <pwd.h>
+ #include <signal.h>
+@@ -49,7 +53,18 @@
+ #include <string.h>
+ #include <termios.h>
+ #include <unistd.h>
++#ifdef __Kiwi__
++#define LOG_EMERG   0
++#define LOG_ALERT   1
++#define LOG_CRIT    2
++#define LOG_ERR     3
++#define LOG_WARNING 4
++#define LOG_NOTICE  5
++#define LOG_INFO    6
++#define LOG_DEBUG   7
++#else
+ #include <syslog.h>
++#endif
+ #include <netdb.h>
+ #include <ctype.h>
+ #include <stdarg.h>
+@@ -85,7 +100,9 @@
+ #include <netinet/in_systm.h>
+ #endif
+ 
++#ifndef __Kiwi__
+ #include <netinet/ip.h>
++#endif
+ 
+ #ifdef HAVE_NETINET_TCP_H
+ #include <netinet/tcp.h>
+diff -urN dropbear-2022.82.orig/netio.c dropbear-2022.82/netio.c
+--- dropbear-2022.82.orig/netio.c	2022-11-13 11:03:21.176165613 +0000
++++ dropbear-2022.82/netio.c	2022-11-13 11:03:29.082155174 +0000
+@@ -297,6 +297,7 @@
+ 	c->writequeue = writequeue;
+ }
+ 
++#ifndef __Kiwi__
+ void packet_queue_to_iovec(const struct Queue *queue, struct iovec *iov, unsigned int *iov_count) {
+ 	struct Link *l;
+ 	unsigned int i;
+@@ -326,6 +327,7 @@
+ 		iov[i].iov_len = len;
+ 	}
+ }
++#endif
+ 
+ void packet_queue_consume(struct Queue *queue, ssize_t written) {
+ 	buffer *writebuf;
