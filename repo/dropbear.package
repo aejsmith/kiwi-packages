@@ -1,6 +1,6 @@
 {
     "name": "dropbear",
     "version": "2022.82",
-    "revision": "1",
+    "revision": "2",
     "archs": ["amd64"]
 }
